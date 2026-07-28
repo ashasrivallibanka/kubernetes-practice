@@ -1,4 +1,4 @@
-# Kubernetes Project 3 - Deployments
+# Kubernetes Project 3 - Deployment
 
 ## Objective
 
