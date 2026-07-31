@@ -1,0 +1,59 @@
+apiVersion: apps/v1
+kind: Deployment
+
+metadata:
+  name: backend
+
+spec:
+  replicas: 2
+
+  selector:
+    matchLabels:
+      app: backend
+
+  template:
+    metadata:
+      labels:
+        app: backend
+
+    spec:
+      containers:
+      - name: backend
+        image: ashasrivallibanka/taskmanager-backend:latest
+        imagePullPolicy: Always
+
+        ports:
+        - containerPort: 5000
+
+        env:
+        - name: PORT
+          valueFrom:
+            configMapKeyRef:
+              name: taskmanager-config
+              key: PORT
+
+        - name: NODE_ENV
+          valueFrom:
+            configMapKeyRef:
+              name: taskmanager-config
+              key: NODE_ENV
+
+        - name: MONGO_URI
+          valueFrom:
+            secretKeyRef:
+              name: taskmanager-secret
+              key: MONGO_URI
+
+        readinessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 5
+          periodSeconds: 5
+
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 5000
+          initialDelaySeconds: 15
+          periodSeconds: 10
